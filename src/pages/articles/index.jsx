@@ -1,9 +1,9 @@
-import Head from 'next/head'
+import Head from 'next/head';
 
-import { Card } from '@/components/Card'
-import { SimpleLayout } from '@/components/SimpleLayout'
-import { getAllArticles } from '@/lib/getAllArticles'
-import { formatDate } from '@/lib/formatDate'
+import { Card } from '@/components/Card';
+import { SimpleLayout } from '@/components/SimpleLayout';
+import { getAllArticles } from '@/lib/getAllArticles';
+import { formatDate } from '@/lib/formatDate';
 
 function Article({ article }) {
   return (
@@ -31,14 +31,14 @@ function Article({ article }) {
         {formatDate(article.date)}
       </Card.Eyebrow>
     </article>
-  )
+  );
 }
 
 export default function ArticlesIndex({ articles }) {
   return (
     <>
       <Head>
-        <title>Articles - Spencer Sharp</title>
+        <title>Articles - Jody LeCompte</title>
         <meta
           name="description"
           content="All of my long-form thoughts on programming, leadership, product design, and more, collected in chronological order."
@@ -57,7 +57,7 @@ export default function ArticlesIndex({ articles }) {
         </div>
       </SimpleLayout>
     </>
-  )
+  );
 }
 
 export async function getStaticProps() {
@@ -65,5 +65,5 @@ export async function getStaticProps() {
     props: {
       articles: (await getAllArticles()).map(({ component, ...meta }) => meta),
     },
-  }
+  };
 }

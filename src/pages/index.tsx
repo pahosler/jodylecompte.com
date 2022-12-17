@@ -91,7 +91,7 @@ export default function Home({ articles }) {
     <>
       <Head>
         <title>
-          Spencer Sharp - Software designer, founder, and amateur astronaut
+          Jody LeCompte - Software designer, founder, and amateur astronaut
         </title>
         <meta
           name="description"
