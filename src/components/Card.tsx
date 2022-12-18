@@ -16,9 +16,10 @@ function ChevronRightIcon(props) {
 }
 
 type CardProps = {
-  as: any; //TODO: Figure out how to type this
+  as?: any; //TODO: Figure out how to type this
   className?: string;
   children?: React.ReactNode;
+  href?: string;
 };
 
 export function Card({
@@ -35,11 +36,11 @@ export function Card({
   );
 }
 
-Card.Link = function CardLink({ children, ...props }) {
+Card.Link = function CardLink({ children, href, ...props }) {
   return (
     <>
       <div className="absolute -inset-y-6 -inset-x-4 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 dark:bg-zinc-800/50 sm:-inset-x-6 sm:rounded-2xl" />
-      <Link {...props}>
+      <Link href={href} {...props}>
         <span className="absolute -inset-y-6 -inset-x-4 z-20 sm:-inset-x-6 sm:rounded-2xl" />
         <span className="relative z-10">{children}</span>
       </Link>
@@ -47,7 +48,11 @@ Card.Link = function CardLink({ children, ...props }) {
   );
 };
 
-Card.Title = function CardTitle({ as: Component = 'h2', href, children }) {
+Card.Title = function CardTitle({
+  as: Component = 'h2',
+  href,
+  children,
+}: CardProps) {
   return (
     <Component className="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
       {href ? <Card.Link href={href}>{children}</Card.Link> : children}
@@ -76,7 +81,7 @@ Card.Cta = function CardCta({ children }) {
 };
 
 type CardEyebrowProps = {
-  as: any;
+  as?: any;
   decorate?: boolean;
   className?: string;
   children?: React.ReactNode;

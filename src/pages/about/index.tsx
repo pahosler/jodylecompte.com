@@ -12,7 +12,19 @@ import {
 } from '@/components/SocialIcons';
 import portraitImage from '@/images/portrait.jpg';
 
-function SocialLink({ className, href, children, icon: Icon }) {
+type SocialLinkProps = {
+  className?: string;
+  href: string;
+  children: React.ReactNode;
+  icon: any;
+};
+
+function SocialLink({
+  className,
+  href,
+  children,
+  icon: Icon,
+}: SocialLinkProps) {
   return (
     <li className={clsx(className, 'flex')}>
       <Link

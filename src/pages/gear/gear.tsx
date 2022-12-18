@@ -14,7 +14,13 @@ function ToolsSection({ children, ...props }) {
   );
 }
 
-function Tool({ title, href, children }) {
+type ToolProps = {
+  title: string;
+  href?: string;
+  children: React.ReactNode;
+};
+
+function Tool({ title, href, children }: ToolProps) {
   return (
     <Card as="li">
       <Card.Title as="h3" href={href}>
