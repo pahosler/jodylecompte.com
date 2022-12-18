@@ -80,11 +80,11 @@ export default function Home({ articles }) {
     <>
       <Head>
         <title>
-          Jody LeCompte - Software designer, founder, and amateur astronaut
+          Jody LeCompte - Father, Fisherman, and Full-Stack Developer
         </title>
         <meta
           name="description"
-          content="I’m Spencer, a software designer and entrepreneur based in New York City. I’m the founder and CEO of Planetaria, where we develop technologies that empower regular people to explore space on their own terms."
+          content="I'm Jody LeCompte. Father, Fisherman, and Full-Stack Developer. I am a full stack developer with a passion for using my skills and knowledge to make the internet a better place. With a focus on Typescript, React, and PHP, I specialize in creating high-quality, accessible solutions that solve real business problems."
         />
       </Head>
       <Container className="mt-9">
@@ -92,7 +92,19 @@ export default function Home({ articles }) {
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
             Father, Fisherman and Full-Stack Developer
           </h1>
-          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400"></p>
+          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+            I am a full stack developer with a passion for using my skills and
+            knowledge to make the internet a better place. With a focus on
+            Typescript, React, and PHP, I specialize in creating high-quality,
+            accessible solutions that solve real business problems.
+          </p>
+          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+            In addition to my technical expertise, I am also dedicated to
+            sharing my knowledge through educational material, helping others to
+            learn and grow in their own development careers. I am driven by a
+            strong desire to make a positive impact through my work and to help
+            others achieve their full potential.
+          </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
               href="https://twitter.com/jody_lecompte"
