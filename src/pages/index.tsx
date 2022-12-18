@@ -1,9 +1,6 @@
-import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
-import clsx from 'clsx';
 
-import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Container } from '@/components/Container';
 import {
@@ -12,15 +9,7 @@ import {
   GitHubIcon,
   LinkedInIcon,
 } from '@/components/SocialIcons';
-import image1 from '@/images/photos/image-1.jpg';
-import image2 from '@/images/photos/image-2.jpg';
-import image3 from '@/images/photos/image-3.jpg';
-import image4 from '@/images/photos/image-4.jpg';
-import image5 from '@/images/photos/image-5.jpg';
-import logoAirbnb from '@/images/logos/airbnb.svg';
-import logoFacebook from '@/images/logos/facebook.svg';
-import logoPlanetaria from '@/images/logos/planetaria.svg';
-import logoStarbucks from '@/images/logos/starbucks.svg';
+
 import { generateRssFeed } from '@/lib/generateRssFeed';
 import { getAllArticles } from '@/lib/getAllArticles';
 import { formatDate } from '@/lib/formatDate';
@@ -78,9 +67,9 @@ function Article({ article }) {
   );
 }
 
-function SocialLink({ icon: Icon, ...props }) {
+function SocialLink({ icon: Icon, href, ...props }) {
   return (
-    <Link className="group -m-1 p-1" {...props}>
+    <Link className="group -m-1 p-1" href={href} {...props}>
       <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
     </Link>
   );
@@ -106,22 +95,17 @@ export default function Home({ articles }) {
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400"></p>
           <div className="mt-6 flex gap-6">
             <SocialLink
-              href="https://twitter.com"
+              href="https://twitter.com/jody_lecompte"
               aria-label="Follow on Twitter"
               icon={TwitterIcon}
             />
             <SocialLink
-              href="https://instagram.com"
-              aria-label="Follow on Instagram"
-              icon={InstagramIcon}
-            />
-            <SocialLink
-              href="https://github.com"
+              href="https://github.com/jodylecompte"
               aria-label="Follow on GitHub"
               icon={GitHubIcon}
             />
             <SocialLink
-              href="https://linkedin.com"
+              href="https://linkedin.comd/in/jodylecompte"
               aria-label="Follow on LinkedIn"
               icon={LinkedInIcon}
             />
