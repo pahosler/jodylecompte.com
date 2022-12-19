@@ -17,6 +17,7 @@ specifiers:
   feed: ^4.2.2
   focus-visible: ^5.2.0
   next: 13.0.2
+  nextjs-google-analytics: ^2.2.2
   postcss-focus-visible: ^6.0.4
   prettier: ^2.7.1
   prettier-plugin-tailwindcss: ^0.1.11
@@ -42,6 +43,7 @@ dependencies:
   feed: 4.2.2
   focus-visible: 5.2.0
   next: 13.0.2_biqbaboplfbrettd7655fr4n2y
+  nextjs-google-analytics: 2.2.2_next@13.0.2+react@18.2.0
   postcss-focus-visible: 6.0.4
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -3413,6 +3415,18 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
+
+  /nextjs-google-analytics/2.2.2_next@13.0.2+react@18.2.0:
+    resolution: {integrity: sha512-PfA5QZCV+tsCEHG6AE3UXHY8fpHguN+l8t81GztdVW1EtX6UCfu8/rb/X/E+D3oFMY0P3YFQzouSgdm1OhWFiA==}
+    peerDependencies:
+      next: '>=11.0.0'
+      react: '>=17.0.0'
+    dependencies:
+      next: 13.0.2_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: false
 
   /node-releases/2.0.7:
