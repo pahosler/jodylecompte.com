@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 
 import { Container } from '@/components/Container';
@@ -32,10 +33,24 @@ export function ArticleLayout({
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{`${meta.title} - Jody LeCompte`}</title>
         <meta name="description" content={meta.description} />
-      </Head>
+      </Head> */}
+      <NextSeo
+        title={`${meta.title} - Jody LeCompte`}
+        description={meta.description}
+        additionalMetaTags={[
+          {
+            property: 'dc:creator',
+            content: 'Jody LeCompte',
+          },
+        ]}
+        openGraph={{
+          title: `${meta.title} - Jody LeCompte`,
+          description: meta.description,
+        }}
+      />
       <Container className="mt-16 lg:mt-32">
         <div className="xl:relative">
           <div className="mx-auto max-w-2xl">
