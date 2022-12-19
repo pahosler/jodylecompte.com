@@ -49,6 +49,12 @@ export function ArticleLayout({
         openGraph={{
           title: `${meta.title} - Jody LeCompte`,
           description: meta.description,
+          siteName: 'JodyLeCompte.com',
+        }}
+        twitter={{
+          handle: '@jody_lecompte',
+          site: '@jody_lecompte',
+          cardType: 'summary',
         }}
       />
       <Container className="mt-16 lg:mt-32">
