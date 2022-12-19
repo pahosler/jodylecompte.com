@@ -1,14 +1,154 @@
-import { ArticleLayout } from '@/components/ArticleLayout';
 import Image from 'next/image';
 
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+import catBox from './catbox.webp';
+import htmlTree from './html.webp';
+import dolls from './dolls.webp';
+import boxModel from './box-model.webp';
+
 export const meta = {
-  author: 'Adam Wathan',
-  date: '2022-09-05',
-  title: 'Crafting a design system for a multiplanetary future',
-  description:
-    'Most companies try to stay ahead of the curve when it comes to visual design, but for Planetaria we needed to create a brand that would still inspire us 100 years from now when humanity has spread across our entire solar system.',
+  author: 'Jody LeCompte',
+  date: '2022-12-19',
+  title: 'The CSS Box Model',
+  description: `The CSS box model is a fundamental, but often misunderstood aspect of web development. Have you ever created a few pieces of UI, carefully crafting all the details, only to get something vastly different from what you expected? Let's take a deep dive into why this can happen.`,
 };
 
 export default (props) => <ArticleLayout meta={meta} {...props} />;
 
-Write the best blog post you've ever written
+<Image src={catBox} alt="A cat in a cardboard box" />
+
+{meta.description}
+
+## Prerequisites
+
+The only assumption this articles makes is that you understand the basics of HTML and CSS. If you are familiar with HTML elements
+and basic CSS selectors like `p` or `.blue-text` and CSS properties like font size or width, you will be totally fine.
+
+## Building Up Our Mental Model
+
+The most accurate way to describe an HTML document is in the shape of a tree. It begins with the `html` element and each element
+in the document is a descedent of that tree. Visually, this is shown below.
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+  <Image src={htmlTree} alt="A tree diagram of a simple HTML document" />
+</div>
+
+Although this graphic does not display the nesting in the most accurate way, this is the natural form of an HTML document and
+how it is represented by the document object model (DOM). But let's put that in our back pocket, for now, because it is irrelevent
+to the way I want you to think about things for the context of this article.
+
+Instead, I want you to think of your HTML document not too dissimilar from a set of Matreshka dolls.
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+  <Image src={dolls} alt="A line of Matreshka dolls" />
+</div>
+
+I like to believe everyone's grandmother had a set of these funny little dolls in their home, but in case anyone is unfamiliar
+allow me a brief detour. The largest of the dolls is often referred to as the mother doll and represents the matriarch of a family.
+Open her up, and you will find a slightly smaller doll, and then again and again to reach the smallest.
+
+The way we outline the layout and components of our user interfaces is very similar. Re-visiting the earlier graphic, our `html`
+element is the largest box that contains our entire document. Nested inside is the `body` element, which in turn contains our other
+elements such as a paragraph or a list. This is the foundation of the CSS box model which is the system browsers use to determine
+how to render a piece of UI, namely it's dimensions.
+
+## Quick Note: Positioning
+
+The information presented from this point down will refer exclusively to items which are statically positioned, which is the
+default for all elements unless explicitly changed. The rationale for this is that positions of `absolute` or `relative` have
+very nuanced behavior and will eventually be an article all their own. Understanding static position first will lay a solid
+foundation that makes debugging those quirkier setups significantly easier.
+
+Flex and grid will be omitted for the same reason.
+
+## Display Types: Block and Inline
+
+The first step of conceptualizing the box model is understanding the various types of elements you may potentially use.
+
+The most common type of element are `block` level elements, with a few common examples beinf `div`, `p`, and `ul` elements.
+The default behavior of a block level element is that it's height is equal to it's content (more on this later) and it spans the
+entire width of it's parent container. You are also able to set alternative values for the `height`, `width`, `margin`, and `padding`
+properties. Even if you override one of these properties, such as setting the width to 50%, the browser will insert a line break after
+each element so each block element will appear under the one before.
+
+An alternative is an inline element, some common examples being `span` or `img`. The default behavior of these elements is that they do not
+receive the line break after each element like `block` level do, and each element appear one after the other. Your options for customization
+are more constained as well, as you can apply margin and padding to the left or right side, but placing either on the top or bottom is ignored
+by the browser. You also cannot apply modifiations to their width or their height.
+
+<b>Slight Gotcha</b>: Although you can't override the height of an inline
+element, the height is not necessarily static. For example, if you put a span
+with a small amount of text on either side of an image, the container will grow
+to the height of the image, and the text will appear at the bottom.
+
+There is a hybrid of both of these types, called `inline-block`. The primary difference is that inline-block elements will still appear side-by-side,
+but you are able to apply a width or height. Padding and margin can also be applied to the top and bottom as well, not simply the left and right.
+
+## Box Sizing and the Box Model
+
+Now with the foundation out of the way, we are going to turn the boxception up to 11. In addition to being able to think of each
+element in the document as being boxes inside of boxes, each element is also composed of a few smaller boxes: `margin`, `padding`, `content`, and `border` boxes.
+
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Image
+    src={boxModel}
+    alt="A diagram of the box model showing each box that composes the element"
+  />
+  <figure>Credit: MDN</figure>
+</div>
+
+As the name suggests, the content box is the very-most center box that actually houses the content, like the text inside of a paragraph. Skipping over one box, the border box wraps around the content box. Even if there is no border (ie, `border: none`),
+this box is still present. Then finally our padding is the space that sits between the content box and the border box, while margin
+is outside of the border box.
+
+### Practical Exercise
+
+Let's step through a simple excercise that is an example of where most, if not all, CSS newbies get bitten by box sizing. Suppose
+you create a `div` in your code and apply the following styles:
+
+```css
+.example {
+  width: 100px;
+  padding: 25px;
+  border: 3px solid #000;
+}
+```
+
+Wait a minute... now our `div` has an actual rendered width of `156px`. What just happened?
+
+The default box sizing model used by the browser is called `content-box` sizing. This means that adjustments to height or width are applied to the content box. Remember that this is our inner most box and margin, padding, and border boxes will all add additional size as directed by our other CSS rules. So the CSS ruleset above gives us an initial content box
+size of `100px` but then adds `25px` of padding to the left and right side, and finally `3px` of border to the left and right side which produces our final calculated width of `156px`.
+
+## An Alternative: Border Box Sizing
+
+There is an alternative to a `box-sizing` of `content-box` and that is border box sizing. Nothing changes about the behaviors described above such as inline level elements versus block level elements, but instead of our `width` property being applied to the content box, it is applied to the border box.
+
+With a small tweak to the CSS above:
+
+```css
+.example {
+  box-sizing: border-box;
+  width: 100px;
+  padding: 25px;
+  border: 3px solid #000;
+}
+```
+
+Our `div` now has the expected width of 100px. But make note of the fact that other attributes such as margin or padding still apply, so this model now works in reverse. What do I mean by that? Essentially just that now instead of the additional 28 pixels being applied to the base width of 100 pixels, those values are now subtracted from the content box. So the content box of the element was reduced to just 44 pixels. So keep this in mind.
+
+That said, I and a lot of other people who work with CSS feel as though this is still a much more sensible mental model.
+Because of this, a lot of CSS frameworks, CSS resets, and CSS normalizers will automatically set the box sizing of all elements to `border-box`. If the behavior of the example above seemed strange or unexpected, you may already be using something like `normalize.css` that resets this default.
+
+You can accomplish this with the following CSS:
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+## Conclusion
+
+As a reminder, there are other scenarios where behavior will deviate from the above. Such as setting the display property on an element to alternatives like `flex`, `grid`, `inline-flex`, or `inline-grid`. CSS is a simple language syntatically, but can become complicated because of the nuance of it's behavior and the browsers interpretation of your rule sets, but I hope now you feel more confident in your ability to style things how you wish and more consistently
+nail the expected outcome.
