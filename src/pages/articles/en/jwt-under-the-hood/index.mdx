@@ -1,0 +1,349 @@
+import Image from 'next/image';
+
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+import jwtLogo from './jwt.webp';
+
+export const meta = {
+  author: 'Jody LeCompte',
+  date: '2022-12-21',
+  title: 'JWT: Under the Hood',
+  description: `Over the last few years, JSON Web Tokens or JWTs for short have become a prevalent way of handling claims 
+  across systems. Let's learn the ins and outs of how they work by building a simple JWT parsing
+  library.`,
+};
+
+export default (props) => <ArticleLayout meta={meta} {...props} />;
+
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Image src={jwtLogo} alt="The JSON Web Token Logo" />
+  <figure>Credit: jwt.io</figure>
+</div>
+
+{meta.description}
+
+## Prerequisites
+
+The only necessary prerequisite knowledge for this article is a familiarity with JavaScript, the code examples
+will not feature any advanced concepts. A high level understanding of cryptography and hashing is helpful, but not
+strictly required as we will discuss the cliff notes.
+
+## What is a JSON Web Token?
+
+JSON Web Tokens, which we will refer to as JWTs (pronounced JOT) going forward is defined on [jwt.io](https://jwt.io)
+as follows:
+
+> JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+
+Let's break that down a little bit. A claim in this context is simply a bit of information about a system, for example,
+the user ID and permissions of a logged in user stored as a key-value pair. This example may look something like this:
+
+```json
+{
+  "userId": 12512613,
+  "scopes": "user.account, user.post"
+}
+```
+
+A <abbr title="JOT">JWT</abbr> is a way of representing this information and sharing it between systems in a way
+that is secure and URL-safe meaning it can be shared in a URL, like a query string in a HTTP request. An important
+note: when I say secure, I am referring to security of validation and freshness, but not necessarily secure from a
+data perspective. What does that mean?
+
+## Quick Aside: Cryptographic Signing and JWT Security
+
+In cryptography at a high level, there are two approaches you can take. Encryption is the process of using a secret
+such as a key to obfuscate a bit of information, and then the same secret can be later used by the receiving party
+to decrypt the information back into it's original form. The second is hashing, which is intentionally one-direction
+and cannot be decrypted after. To verify correctness, the same information must be hashed again and compared to the
+original.
+
+### Practical Example
+
+When you sign-up for a website and that website needs to store your password, that password is
+stored in the database in a hashed format. For example:
+
+| Password   |                               Hash                               |
+| ---------- | :--------------------------------------------------------------: |
+| "password" | 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 |
+
+Then when you go to login again, they cannot decrypt this password, so they apply the same hashing algorithm
+and compare the resulting hash to the hash stored in the database. Given the same input, a stable hash will always
+produce the same output.
+
+### Cryptographic Signing
+
+The cryptographic signing is what creates the security of a JWT. I will elaborate more on how the signature is
+generated shortly. But the short and skinny for now is that if the signature of a JWT is determined to be incorrect
+then it is an indicator that the JWT has been tampered with and should be discarded.
+
+This is what I meant by JWTs do not ensure security of data, because as we will also look at shortly, the data is
+available behind Base64 encoding and can be decoded. So you should never store sensitive data directly inside of a token.
+
+## The Anatomy of a JSON Web Token
+
+A JWT is composed of three unique pieces that are concatenated together by a period,
+
+### Header
+
+The header contains metadata about the claim that is necessary in order to attempt to validate and consume a token.
+It typically contains the type or `typ` of the token and the signing algorithm used to generate the signature
+represented by `alg`. An example of this in JSON would look like this:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+This lets the receiving party know that this token is a JWT and that the HS256 algorithm was used to generate the signature.
+
+### Payload
+
+The payload of the token is the actual claim or the data that needs to be shared between two collaborating parties.
+There are a few reserved keys for important information that may or may not be applicable to your use case such as:
+
+| Key |                       Value                        |
+| --- | :------------------------------------------------: |
+| exp |  The UNIX timestamp of the expiration date & time  |
+| iss | The name of the issuing party that created the JWT |
+
+Alternatively, you can create your own key-value pairs that will contain whatever information may be relevant to your
+needs, keeping in mind the note above about this information being easily visible on intercepted tokens. Most libraries
+will accept any valid string for a key or a value, but JWTs are designed to be small and concise, so claim keys should
+be kept to a minimum. In keeping with the example at the opening of this post, our claim might look something like this:
+
+```json
+{
+  "userId": 12512613,
+  "scopes": "user.account, user.post",
+  "exp": 1671928422
+}
+```
+
+This represents our original data and states that the token will expire in 3 days from the time of me typing this.
+
+### Signature
+
+After the header and payload are Base64 encoded, the final step in creating a JWT is to use the signing algorithm
+specified in the header to create a hash of the header and payload concatenated together with a period. Some
+hashing algorithms such as SHA256 or MD5 just accept an input, but signing algorithms like HS256 also accept a secret
+that is used as part of the process. So if you take the same header and payload and encrypt with the key "jody", and
+then with the key "javavscript", you will get two different hashes.
+
+If someone intercepts the token and attempts to modify the payload before re-transmitting, the receiving party would
+be able to determine this because generating a new signature from the received header and payload would not match the
+signature of the token. If the interceptor has the secret, then they can flawlessly produce a new token. But this is
+not an issue unique to JWT and why you should always treat your token's `secret` with the seriousness you do your
+ATM PIN or online banking password.
+
+The example header and payload above, signed with HS256 algorithm and secret "jody" would produce the following token.
+I have added extra spaces and newlines after each section to be more easily read.
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 .
+eyJ1c2VySWQiOjEyNTEyNjEzLCJzY29wZXMiOiJ1c2VyLmFjY291bnQsIHVzZXIucG9zdCJ9 .
+S06zS8YnqN6HK8F_U8s_9LgzN0acuLuh-H8tE3_w3VI
+```
+
+## Writing Our Own JWT Library Disclaimer
+
+The remainder of this article is focused on implementing our own micro-library that is capable of generating,
+validating, and if valid outputting the contents of a JWT. It's important to note that this is strictly a
+learning exercise because one of the best ways to understand something is to implement it yourself.
+
+That said, this code will not be production worthy and should not be used as such. If you are writing an
+application that generates or consumes JWTs, you should use an appropriate and battle tested library for your tech
+stack. I am predominantly a TypeScript and Node developer so [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+from Auth0 is my preferred weapon of choice.
+
+## Making Our Plan
+
+Now that we have some background context on a JWT and how it functions. Let's start with a basic plan of what our
+micro-library needs to be able to accomplish. For the sake of brevity we are going to focus on the following
+core behaviors that any JWT library will have:
+
+- Generate a token with the HS256 signing algorithm
+- Given a valid token, return the payload of the token
+- Given a token that has expired, fail verification and return `false`
+- Given a token that has been tampered with in some way, fail verification and return `false`
+
+For the "Show Me The Code!" reader, the [entire source](https://github.com/jodylecompte/lesson-jwt-under-the-hood)
+can be found on Github.
+
+We will be using the crypto module that is built-in to Node for the signature generation. Everyone has a preferred
+way of building simple Node apps, so I am going to skip that portion, but if you are unfamiliar with building a
+Node app locally then [repl.it](https://repl.it) is a free and easy way to get up and running.
+
+## Getting Started and Base64 Encoding
+
+The first step will be creating a new file and writing our functions to Base64 encode. Create a file called `jwt.js`
+and populate it with the following:
+
+```javascript
+const crypto = require('crypto');
+
+function base64Encode(obj) {
+  return Buffer.from(JSON.stringify(obj)).toString('base64url');
+}
+
+function base64Decode(encoded) {
+  return JSON.parse(Buffer.from(encoded, 'base64url').toString());
+}
+```
+
+I am not using any sort of tooling or build-step so I am just using CommonJS modules to import the built-in `crypto`
+package, but depending on your setup and preference you can use the `import` syntax instead.
+
+Since we know we will be working with string representations of our data, that is baked into the functions so
+when we encode we convert the object into a JSON string, and parse back into an object when decoded. A `Buffer` is
+a JavaScript data structure used for storing a fixed-length sequence of binary data. It is capable of being constructed
+from a string or a Base64 encoded string and outputting either making for a convenient way to handle our encoding.
+
+## Generating a Signature And Signing
+
+The next step now that we have encoded the first two sections of our token, we need to generate a signature
+based on our secret key. I am super stoked that the crypto package has been folded into Node's standard libraries
+because it has a very simple and intuitive API.
+
+```javascript
+function generateSignature(body, secret) {
+  return crypto.createHmac('sha256', secret).update(body).digest('base64url');
+}
+```
+
+The `createHmac` function accepts the type of algorithm we want to use for hashing and our secret key, the `update`
+function accepts the hash contents to generate our signature.
+
+The next step is just a matter of using the functions we have already defined to put everything together.
+
+```javascript
+function sign(header, payload, secret) {
+  const encodedHeader = base64Encode(header);
+  const encodedPayload = base64Encode(payload);
+  const signature = generateSignature(
+    encodedHeader + '.' + encodedPayload,
+    secret
+  );
+  return `${encodedHeader}.${encodedPayload}.${signature}`;
+}
+```
+
+## Verifying a JWT
+
+The final functionality we need is the ability to verify based on the steps we outlined in the plan. We are
+taking a very "sunny-day" approach and assuming input will always be a "valid" (structurally) JWT.
+
+```javascript
+function verify(token, secret) {
+  const [header, payload, signature] = token.split('.');
+
+  const decodedHeader = base64Decode(header);
+  const decodedPayload = base64Decode(payload);
+
+  if (generateSignature(header + '.' + payload, secret) !== signature) {
+    return false;
+  }
+
+  if (decodedPayload.hasOwnProperty('exp') && decodedPayload.exp < Date.now()) {
+    return false;
+  }
+
+  return {
+    header: decodedHeader,
+    payload: decodedPayload,
+  };
+}
+```
+
+After we split our token and destruture it into its three pieces, we can go ahead and decode our header and payload.
+At this point, we aren't actually sure if the token is even trust-worthy, it's possible it's been tampered with. But
+we need to know if there is an expiration property on the claim to ensure it's not expired. Additionally, if this
+were a more feature-packed library, we would need the `alg` property off of the header to know which algorithm to use
+to verify the signature.
+
+You may be thinking, "What if a bad actor took an expired token and modified the expiration to be in the future?"
+Great question! That is why the first step we take is to feed the still encoded header, payload, and our secret
+key back into `generateSignature`. If the resulting signature does not match the signature we receive, the token
+has been tampered with and we just return false.
+
+Knowing now our token is trust-worthy, we can check if we have an expiration and if the token is expired. Since
+the value will be a UNIX timestamp (seconds since UNIX epoch), we can simply compare it to `Date.now()` to see
+if the token expiration is in the past. If so, we also return false.
+
+Finally, if we have not early returned on error by now, the token is valid and secure and we return the header and
+payload.
+
+## Testing Time!
+
+We are both far too skilled to do something like writing bugs, but we should probably test our code a little bit
+just to be on the safe side! In your project, create a file with the following contents:
+
+```javascript
+const jwt = require('./jwt');
+
+const header = {
+  alg: 'HS256',
+  typ: 'JWT',
+};
+
+const payload = {
+  userId: 12512613,
+  scopes: 'user.account, user.post',
+};
+
+const expiredPayload = {
+  userId: 12512613,
+  scopes: 'user.account, user.post',
+  exp: 1671509615,
+};
+
+// Case 1. Should generate a valid JWT
+const token = jwt.sign(header, payload, 'jody');
+console.log(
+  'Expect: ',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyNTEyNjEzLCJzY29wZXMiOiJ1c2VyLmFjY291bnQsIHVzZXIucG9zdCJ9.S06zS8YnqN6HK8F_U8s_9LgzN0acuLuh-H8tE3_w3VI'
+);
+console.log('Actual: ', token);
+console.log('\n');
+
+// Case 2. Given a valid token, return the payload of the token
+const { header: caseTwoHeader, payload: caseTwoPayload } = jwt.verify(
+  token,
+  'jody'
+);
+console.log('Expected: ', { header, payload });
+console.log('Actual: ', { header: caseTwoHeader, payload: caseTwoPayload });
+console.log('\n');
+
+// Case 3. Given a token that has expired, fail verification and return false
+const expiredToken = jwt.sign(header, expiredPayload, 'jody');
+const parsedExpiredToken = jwt.verify(expiredToken, 'jody');
+console.log('Expected: ', false);
+console.log('Actual: ', parsedExpiredToken);
+console.log('\n');
+
+// Case 4. Given a token that has been tampered with in some way, fail verification and return false
+const tamperedToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyNTExMjQxMiwic2NvcGVzIjoidXNlci5hY2NvdW50LCB1c2VyLnBvc3QifQ.S06zS8YnqN6HK8F_U8s_9LgzN0acuLuh-H8tE3_w3VI';
+const parsedTamperedToken = jwt.verify(tamperedToken, 'jody');
+console.log('Expected: ', false);
+console.log('Actual: ', parsedTamperedToken);
+```
+
+The code is just a re-hashing of what we have already discussed, so a play by play probably ins't necessary but
+just a little extra context around the above cases:
+
+1. The same header, payload, and secret were fed into the interactive tool at [jwt.io](https://jwt.io) to establish
+   a known correct token to compare to.
+2. The expiration is omitted so that we know for certain the token will be valid and not expired.
+3. The token expired weeks ago, giving us another known error case.
+4. I manually changed the payload of the previous token to use another user ID so that the signature would be invalid.
+
+## Conclusion
+
+You've probably utilized JWTs before and maybe didn't even realize what it was or pay too much attention to it,
+I definitely did! It's not often that you could read the full RFC for a standard and write a bare-bones implementation
+in a single sitting. It's always great when our tools are so simple. Now that you know the whole picture, a JWT
+no longer has to be a black box.
