@@ -1,0 +1,159 @@
+import Image from 'next/image';
+
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+import jwtLogo from './jwt.webp';
+
+export const meta = {
+  author: 'Jody LeCompte',
+  date: '2022-12-21',
+  title: 'JWT: Under the Hood',
+  description: `Over the last few years, JSON Web Tokens or JWTs for short have become a prevelent way of handling claims 
+  across systems. Let's learn the ins and outs of how they work by building a simple JWT parsing
+  library.`,
+};
+
+export default (props) => <ArticleLayout meta={meta} {...props} />;
+
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Image src={jwtLogo} alt="The JSON Web Token Logo" />
+  <figure>Credit: jwt.io</figure>
+</div>
+
+{meta.description}
+
+## Prerequisites
+
+The only neccessary prerequisite knowledge for this article is a familiarity with JavaScript, the code examples
+will not feature any advanced concepts. A high level understanding of cryptography and hasing is helpful, but not
+strictly required as we will discuss the cliff notes.
+
+## What is a JSON Web Token?
+
+JSON Web Tokens, which we will refer to as JWTs (pronounced JOT) going forward is defined on [jwt.io](https://jwt.io)
+as follows:
+
+> JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+
+Let's break that down a little bit. A claim in this context is simply a bit of information about a system, for example,
+the user ID and permissions of a logged in user stored as a key-value pair. This example may look something like this:
+
+```json
+{
+  "userId": 12512613,
+  "scopes": "user.account, user.post"
+}
+```
+
+A <abbr title="JOT">JWT</abbr> is a way of representing this information and sharing it between systems in a way
+that is secure and URL-safe meaning it can be shared in a URL, like a query string in a HTTP request. An important
+note: when I say secure, I am referring to security of validation and freshness, but not necessarily secure from a
+data perspective. What does that mean?
+
+## Quick Aside: Cryptographic Signing and JWT Security
+
+In cryptography at a high level, there are two approaches you can take. Encprytion is the process of using a secret
+such as a key to obfuscate a bit of information, and then the same secret can be later used by the receiving party
+to descrypt the information back into it's original form. The second is hashing, which is intentionally one-direction
+and cannot be decrypted after. To verify correctness, the same information must be hashed again and compared to the
+original.
+
+### Practical Example
+
+When you sign-up for a website and that website needs to store your password, that password is
+stored in the database in a hashed format. For example:
+
+| Password   |                               Hash                               |
+| ---------- | :--------------------------------------------------------------: |
+| "password" | 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 |
+
+Then when you go to login again, they cannot decrypt this password, so they apply the same hashing algorithm
+and compare the resulting hash to the hash stored in the database. Given the same input, a stable hash will always
+produce the same output.
+
+### Cryptographic Signing
+
+The cryptographic signing is what creates the security of a JWT. I will elaborate more on how the signature is
+generated shortly. But the short and skinny for now is that if the signature of a JWT is determined to be incorrect
+then it is an indicator that the JWT has been tampered with and should be discarded.
+
+This is what I meant by JWTs do not ensure security of data, because as we will also look at shortly, the data is
+available behind Base64 encoding and can be decoded. So you should never store sensitive data directly inside of a token.
+
+## The Anatomy of a JSON Web Token
+
+A JWT is composed of three unique pieces that are concatenated together by a period,
+
+### Header
+
+The header contains metadata about the claim that is necessary in order to attempt to validate and consume a token.
+It typically contains the type or `typ` of the token and the signing algorithm used to generate the signature
+represented by `alg`. An example of this in JSON would look like this:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+This lets the receiving party know that this token is a JWT and that the HS256 algorithm was used to generate the signature.
+
+### Payload
+
+The payload of the token is the actual claim or the data that needs to be shared between two collaborating parties.
+There are a few reserved keys for important information that may or may not be applicable to your use case such as:
+
+| Key |                       Value                        |
+| --- | :------------------------------------------------: |
+| exp |  The UNIX timestamp of the expiration date & time  |
+| iss | The name of the issuing party that created the JWT |
+
+Alternatively, you can create your own key-value pairs that will contain whatever information may be relevnat to your
+needs, keeping in mind the note above about this information being easily visible on intercepted tokens. Most libraries
+will accept any valid string for a key or a value, but JWTs are dedsigned to be small and concise, so claim keys should
+be kept to a minimum. In keeping with the example at the opening of this post, our claim might look something like this:
+
+```json
+{
+  "userId": 12512613,
+  "scopes": "user.account, user.post",
+  "exp": 1671928422
+}
+```
+
+This represents our original data and states that the token will expire in 3 days from the time of me typing this.
+
+### Signature
+
+After the header and payload are Base64 encoded, the final step in creating a JWT is to use the signing algorithm
+specified in the header to create a hash of the header and payload concatenated together with a period. Some
+hashing algorithms such as SHA256 or MD5 just accept an input, but signing algorithms like HS256 also accept a secret
+that is used as part of the process. So if you take the same header and payload and encrypt with the key "jody", and
+then with the key "javavscript", you will get two different hashes.
+
+If someone intercepts the token and attempts to modify the payload before re-transmitting, the receiving party would
+be able to determine this because generating a new signature from the received header and payload would not match the
+signature of the token. If the interceptor has the secret, then they can flawlessly produce a new token. But this is
+not an issue unique to JWT and why you should always treat your token's `secret` with the seriousness you do your
+ATM PIN or online banking password.
+
+The example header and payload above, signed with HS256 algorithm and secret "jody" would produce the following token.
+I have added extra spaces and newlines after each section to be more easily read.
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 .
+eyJ1c2VySWQiOjEyNTEyNjEzLCJzY29wZXMiOiJ1c2VyLmFjY291bnQsIHVzZXIucG9zdCJ9 .
+S06zS8YnqN6HK8F_U8s_9LgzN0acuLuh-H8tE3_w3VI
+```
+
+## Writing Our Own JWT Library Disclaimer
+
+The remainder of this article is focused on implementing our own micro-library that is capable of generating,
+validating, and if valid outputting the contents of a JWT. It's important to note that this is strictly a
+learning excercise because one of the best ways to understand something is to implement it yourself.
+
+That said, this code will not be production worthy and should not be used as such. If you are writing an
+application that generates or consumes JWTs, you should use an appropriate and battle tested library for your tech
+stack. I am predominantly a TypeScript and Node developer so [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+from Auth0 is my preferred weapon of choice.
