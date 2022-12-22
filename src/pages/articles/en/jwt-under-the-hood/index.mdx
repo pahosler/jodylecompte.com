@@ -61,11 +61,12 @@ original.
 ### Practical Example
 
 When you sign-up for a website and that website needs to store your password, that password is
-stored in the database in a hashed format. For example:
+stored in the database in a hashed format. For example, the password "password" hashed with SHA256
+would be this:
 
-| Password   |                               Hash                               |
-| ---------- | :--------------------------------------------------------------: |
-| "password" | 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 |
+```
+5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
+```
 
 Then when you go to login again, they cannot decrypt this password, so they apply the same hashing algorithm
 and compare the resulting hash to the hash stored in the database. Given the same input, a stable hash will always
