@@ -5,6 +5,13 @@ import { useRouter } from 'next/router';
 import { Container } from '@/components/Container';
 import { formatDate } from '@/lib/formatDate';
 import { Prose } from '@/components/Prose';
+import { SocialLink } from '@/components/SocialLink';
+import {
+  TwitterIcon,
+  GitHubIcon,
+  LinkedInIcon,
+} from '@/components/SocialIcons';
+import { Newsletter } from './home';
 
 function ArrowLeftIcon(props) {
   return (
@@ -85,6 +92,38 @@ export function ArticleLayout({
               </header>
               <Prose className="mt-8">{children}</Prose>
             </article>
+            <div className="max-w-2xl">
+              <h1 className="mt-16 text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+                About the Author
+              </h1>
+              <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+                Hi, I'm Jody LeCompte! I am a full stack developer with a
+                passion for using my skills and knowledge to make the internet a
+                better place. With a focus on Typescript, React, and PHP, I
+                specialize in creating high-quality, accessible solutions that
+                solve real business problems.
+              </p>
+              <div className="mt-6 flex gap-6">
+                <SocialLink
+                  href="https://twitter.com/jody_lecompte"
+                  aria-label="Follow on Twitter"
+                  icon={TwitterIcon}
+                />
+                <SocialLink
+                  href="https://github.com/jodylecompte"
+                  aria-label="Follow on GitHub"
+                  icon={GitHubIcon}
+                />
+                <SocialLink
+                  href="https://linkedin.comd/in/jodylecompte"
+                  aria-label="Follow on LinkedIn"
+                  icon={LinkedInIcon}
+                />
+              </div>
+              <div className="m-auto mt-8 w-2/3">
+                <Newsletter />
+              </div>
+            </div>
           </div>
         </div>
       </Container>
