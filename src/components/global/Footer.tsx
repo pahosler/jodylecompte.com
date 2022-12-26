@@ -25,6 +25,7 @@ export function Footer() {
                 <NavLink href="/about">About</NavLink>
                 <NavLink href="/articles">Articles</NavLink>
                 <NavLink href="/speaking">Speaking</NavLink>
+                <NavLink href="/accessibility">Accessibility</NavLink>
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
                 &copy; {new Date().getFullYear()} Jody LeCompte. All rights
