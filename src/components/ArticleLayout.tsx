@@ -58,7 +58,7 @@ export function ArticleLayout({
           siteName: 'JodyLeCompte.com',
           images: [
             {
-              url: meta.seoImage,
+              url: 'https://jodylecompte.com/' + meta.seoImage,
               width: 640,
               height: 360,
               alt: meta.title,
