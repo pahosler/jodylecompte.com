@@ -1,0 +1,38 @@
+import Image from 'next/image';
+
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+export const meta = {
+  author: 'Jody LeCompte',
+  date: '2022-12-26',
+  title: 'Series: Demystifying Sorting Algorithms',
+  seoImage: '/articles/dsa.webp',
+  description: `If I were to drop one hundred 20-sided dice in-front of you and 
+  asked you to sort them, how would you do it? This series takes a deep dive into
+   nine of the most common sorting algorithms and their implementations. Let's take 
+   a look at how a computer might approach this.`,
+};
+
+export default (props) => <ArticleLayout meta={meta} {...props} />;
+
+<Image
+  src="/articles/dsa.webp"
+  alt=""
+  width="640"
+  height="420"
+  aria-hidden="true"
+/>
+
+{meta.description}
+
+## Items in this Series
+
+- [Bubble Sort](/articles/en/demystifying-sorting-algorithms/bubble-sort)
+- Selection Sort (Coming Soon)
+- Insertion Sort (Coming Soon)
+- Merge Sort (Coming Soon)
+- Radix Sort (Coming Soon)
+- Quick Sort (Coming Soon)
+- Heap Sort (Coming Soon)
+- Counting Sort (Coming Soon)
+- Bucket Sort (Coming Soon)
