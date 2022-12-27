@@ -2,12 +2,11 @@ import Image from 'next/image';
 
 import { ArticleLayout } from '@/components/ArticleLayout';
 
-import jwtLogo from './jwt.webp';
-
 export const meta = {
   author: 'Jody LeCompte',
   date: '2022-12-21',
   title: 'JWT: Under the Hood',
+  seoImage: '/articles/jwt.webp',
   description: `Over the last few years, JSON Web Tokens or JWTs for short have become a prevalent way of handling claims 
   across systems. Let's learn the ins and outs of how they work by building a simple JWT parsing
   library.`,
@@ -15,10 +14,13 @@ export const meta = {
 
 export default (props) => <ArticleLayout meta={meta} {...props} />;
 
-<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-  <Image src={jwtLogo} alt="The JSON Web Token Logo" />
-  <figure>Credit: jwt.io</figure>
-</div>
+<Image
+  src="/articles/jwt.webp"
+  alt=""
+  width="640"
+  height="420"
+  aria-hidden="true"
+/>
 
 {meta.description}
 
@@ -258,7 +260,7 @@ function verify(token, secret) {
 }
 ```
 
-After we split our token and destruture it into its three pieces, we can go ahead and decode our header and payload.
+After we split our token and destructure it into its three pieces, we can go ahead and decode our header and payload.
 At this point, we aren't actually sure if the token is even trust-worthy, it's possible it's been tampered with. But
 we need to know if there is an expiration property on the claim to ensure it's not expired. Additionally, if this
 were a more feature-packed library, we would need the `alg` property off of the header to know which algorithm to use

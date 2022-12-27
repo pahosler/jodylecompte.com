@@ -2,7 +2,6 @@ import Image from 'next/image';
 
 import { ArticleLayout } from '@/components/ArticleLayout';
 
-import catBox from './catbox.webp';
 import htmlTree from './html.webp';
 import dolls from './dolls.webp';
 import boxModel from './box-model.webp';
@@ -10,13 +9,20 @@ import boxModel from './box-model.webp';
 export const meta = {
   author: 'Jody LeCompte',
   date: '2022-12-19',
+  seoImage: '/articles/cssBoxModel.webp',
   title: 'The CSS Box Model',
   description: `The CSS box model is a fundamental, but often misunderstood aspect of web development. Have you ever created a few pieces of UI, carefully crafting all the details, only to get something vastly different from what you expected? Let's take a deep dive into why this can happen.`,
 };
 
 export default (props) => <ArticleLayout meta={meta} {...props} />;
 
-<Image src={catBox} alt="A cat in a cardboard box" />
+<Image
+  src="/articles/cssBoxModel.webp"
+  alt=""
+  width="640"
+  height="420"
+  aria-hidden="true"
+/>
 
 {meta.description}
 

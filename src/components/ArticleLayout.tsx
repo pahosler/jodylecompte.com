@@ -40,10 +40,9 @@ export function ArticleLayout({
 
   return (
     <>
-      {/* <Head>
-        <title>{`${meta.title} - Jody LeCompte`}</title>
-        <meta name="description" content={meta.description} />
-      </Head> */}
+      <Head>
+        <meta name="twitter:image" content={meta.seoImage} />
+      </Head>
       <NextSeo
         title={`${meta.title} - Jody LeCompte`}
         description={meta.description}
@@ -57,11 +56,20 @@ export function ArticleLayout({
           title: `${meta.title} - Jody LeCompte`,
           description: meta.description,
           siteName: 'JodyLeCompte.com',
+          images: [
+            {
+              url: meta.seoImage,
+              width: 640,
+              height: 360,
+              alt: meta.title,
+              type: 'image/webp',
+            },
+          ],
         }}
         twitter={{
           handle: '@jody_lecompte',
           site: '@jody_lecompte',
-          cardType: 'summary',
+          cardType: 'summary_large_image',
         }}
       />
       <Container className="mt-16 lg:mt-32">
