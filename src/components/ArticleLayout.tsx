@@ -40,6 +40,12 @@ export function ArticleLayout({
 
   return (
     <>
+      <Head>
+        <meta
+          name="twitter:image"
+          content={'https://jodylecompte.com' + meta.seoImage}
+        />
+      </Head>
       <NextSeo
         title={`${meta.title} - Jody LeCompte`}
         description={meta.description}
