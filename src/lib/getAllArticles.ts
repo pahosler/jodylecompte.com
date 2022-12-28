@@ -22,8 +22,12 @@ export async function getAllArticles() {
 
   let articles = await Promise.all(articleFilenames.map(importArticle));
 
-  return articles.sort(
-    (a, z) =>
-      new Date(z.date).getMilliseconds() - new Date(a.date).getMilliseconds()
-  );
+  return articles.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+
+    if (dateA > dateB) return -1;
+    if (dateA < dateB) return 1;
+    return 0;
+  });
 }
