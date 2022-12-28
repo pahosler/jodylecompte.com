@@ -9,7 +9,7 @@ import boxModel from './box-model.webp';
 export const meta = {
   author: 'Jody LeCompte',
   date: '2022-12-19',
-  seoImage: '/articles/cssBoxModel.webp',
+  seoImage: '/articles/cssBoxModel.png',
   title: 'The CSS Box Model',
   description: `The CSS box model is a fundamental, but often misunderstood aspect of web development. Have you ever created a few pieces of UI, carefully crafting all the details, only to get something vastly different from what you expected? Let's take a deep dive into why this can happen.`,
 };
@@ -34,14 +34,14 @@ and basic CSS selectors like `p` or `.blue-text` and CSS properties like font si
 ## Building Up Our Mental Model
 
 The most accurate way to describe an HTML document is in the shape of a tree. It begins with the `html` element and each element
-in the document is a descedent of that tree. Visually, this is shown below.
+in the document is a decedent of that tree. Visually, this is shown below.
 
 <div style={{ display: 'flex', justifyContent: 'center' }}>
   <Image src={htmlTree} alt="A tree diagram of a simple HTML document" />
 </div>
 
 Although this graphic does not display the nesting in the most accurate way, this is the natural form of an HTML document and
-how it is represented by the document object model (DOM). But let's put that in our back pocket, for now, because it is irrelevent
+how it is represented by the document object model (DOM). But let's put that in our back pocket, for now, because it is irrelevant
 to the way I want you to think about things for the context of this article.
 
 Instead, I want you to think of your HTML document not too dissimilar from a set of Matreshka dolls.
@@ -72,7 +72,7 @@ Flex and grid will be omitted for the same reason.
 
 The first step of conceptualizing the box model is understanding the various types of elements you may potentially use.
 
-The most common type of element are `block` level elements, with a few common examples beinf `div`, `p`, and `ul` elements.
+The most common type of element are `block` level elements, with a few common examples being `div`, `p`, and `ul` elements.
 The default behavior of a block level element is that it's height is equal to it's content (more on this later) and it spans the
 entire width of it's parent container. You are also able to set alternative values for the `height`, `width`, `margin`, and `padding`
 properties. Even if you override one of these properties, such as setting the width to 50%, the browser will insert a line break after
@@ -80,8 +80,8 @@ each element so each block element will appear under the one before.
 
 An alternative is an inline element, some common examples being `span` or `img`. The default behavior of these elements is that they do not
 receive the line break after each element like `block` level do, and each element appear one after the other. Your options for customization
-are more constained as well, as you can apply margin and padding to the left or right side, but placing either on the top or bottom is ignored
-by the browser. You also cannot apply modifiations to their width or their height.
+are more constrained as well, as you can apply margin and padding to the left or right side, but placing either on the top or bottom is ignored
+by the browser. You also cannot apply modifications to their width or their height.
 
 <b>Slight Gotcha</b>: Although you can't override the height of an inline
 element, the height is not necessarily static. For example, if you put a span
@@ -93,7 +93,7 @@ but you are able to apply a width or height. Padding and margin can also be appl
 
 ## Box Sizing and the Box Model
 
-Now with the foundation out of the way, we are going to turn the boxception up to 11. In addition to being able to think of each
+Now with the foundation out of the way, we are going to turn the "boxception" up to 11. In addition to being able to think of each
 element in the document as being boxes inside of boxes, each element is also composed of a few smaller boxes: `margin`, `padding`, `content`, and `border` boxes.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -104,13 +104,13 @@ element in the document as being boxes inside of boxes, each element is also com
   <figure>Credit: MDN</figure>
 </div>
 
-As the name suggests, the content box is the very-most center box that actually houses the content, like the text inside of a paragraph. Skipping over one box, the border box wraps around the content box. Even if there is no border (ie, `border: none`),
-this box is still present. Then finally our padding is the space that sits between the content box and the border box, while margin
-is outside of the border box.
+As the name suggests, the content box is the very-most center box that actually houses the content, like the text inside of a paragraph. Skipping over one box, the border box
+wraps around the content box. Even if there is no border (ie, `border: none`), this box is still present. Then finally our padding is the space that sits between the content
+box and the border box, while margin is outside of the border box.
 
 ### Practical Exercise
 
-Let's step through a simple excercise that is an example of where most, if not all, CSS newbies get bitten by box sizing. Suppose
+Let's step through a simple exercise that is an example of where most, if not all, CSS newbies get bitten by box sizing. Suppose
 you create a `div` in your code and apply the following styles:
 
 ```css
@@ -123,12 +123,15 @@ you create a `div` in your code and apply the following styles:
 
 Wait a minute... now our `div` has an actual rendered width of `156px`. What just happened?
 
-The default box sizing model used by the browser is called `content-box` sizing. This means that adjustments to height or width are applied to the content box. Remember that this is our inner most box and margin, padding, and border boxes will all add additional size as directed by our other CSS rules. So the CSS ruleset above gives us an initial content box
-size of `100px` but then adds `25px` of padding to the left and right side, and finally `3px` of border to the left and right side which produces our final calculated width of `156px`.
+The default box sizing model used by the browser is called `content-box` sizing. This means that adjustments to height or width are applied to the content box. Remember
+that this is our inner most box and margin, padding, and border boxes will all add additional size as directed by our other CSS rules. So the CSS rule set above gives
+us an initial content box size of `100px` but then adds `25px` of padding to the left and right side, and finally `3px` of border to the left and right side which produces
+our final calculated width of `156px`.
 
 ## An Alternative: Border Box Sizing
 
-There is an alternative to a `box-sizing` of `content-box` and that is border box sizing. Nothing changes about the behaviors described above such as inline level elements versus block level elements, but instead of our `width` property being applied to the content box, it is applied to the border box.
+There is an alternative to a `box-sizing` of `content-box` and that is border box sizing. Nothing changes about the behaviors described above such as inline level elements versus
+block level elements, but instead of our `width` property being applied to the content box, it is applied to the border box.
 
 With a small tweak to the CSS above:
 
@@ -141,10 +144,13 @@ With a small tweak to the CSS above:
 }
 ```
 
-Our `div` now has the expected width of 100px. But make note of the fact that other attributes such as margin or padding still apply, so this model now works in reverse. What do I mean by that? Essentially just that now instead of the additional 28 pixels being applied to the base width of 100 pixels, those values are now subtracted from the content box. So the content box of the element was reduced to just 44 pixels. So keep this in mind.
+Our `div` now has the expected width of 100px. But make note of the fact that other attributes such as margin or padding still apply, so this model now works in reverse.
+What do I mean by that? Essentially just that now instead of the additional 28 pixels being applied to the base width of 100 pixels, those values are now subtracted from
+the content box. So the content box of the element was reduced to just 44 pixels. So keep this in mind.
 
 That said, I and a lot of other people who work with CSS feel as though this is still a much more sensible mental model.
-Because of this, a lot of CSS frameworks, CSS resets, and CSS normalizers will automatically set the box sizing of all elements to `border-box`. If the behavior of the example above seemed strange or unexpected, you may already be using something like `normalize.css` that resets this default.
+Because of this, a lot of CSS frameworks, CSS resets, and CSS normalizers will automatically set the box sizing of all elements to `border-box`.
+If the behavior of the example above seemed strange or unexpected, you may already be using something like `normalize.css` that resets this default.
 
 You can accomplish this with the following CSS:
 
@@ -156,5 +162,7 @@ You can accomplish this with the following CSS:
 
 ## Conclusion
 
-As a reminder, there are other scenarios where behavior will deviate from the above. Such as setting the display property on an element to alternatives like `flex`, `grid`, `inline-flex`, or `inline-grid`. CSS is a simple language syntatically, but can become complicated because of the nuance of it's behavior and the browsers interpretation of your rule sets, but I hope now you feel more confident in your ability to style things how you wish and more consistently
+As a reminder, there are other scenarios where behavior will deviate from the above. Such as setting the display property on an element to alternatives like
+`flex`, `grid`, `inline-flex`, or `inline-grid`. CSS is a simple language syntactically, but can become complicated because of the nuance of it's behavior and
+the browsers interpretation of your rule sets, but I hope now you feel more confident in your ability to style things how you wish and more consistently
 nail the expected outcome.
