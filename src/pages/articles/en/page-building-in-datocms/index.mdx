@@ -1,0 +1,184 @@
+import Image from 'next/image';
+
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+export const meta = {
+  author: 'Jody LeCompte',
+  date: '2022-12-31',
+  title: 'Building a Page Builder with React and DatoCMS',
+  seoImage: '/articles/jwt.webp',
+  seoImageWidth: 640,
+  seoImageHeight: 420,
+  description: `Headless CMS solutions like DatoCMS have been all the rage, but you may be grasping at straws trying to figure out how to achieve
+  the sort of page building experience you may be used too from older tools like WordPress or Concrete. Let's build a simple page builder using DatoCMS
+  and React to explore this idea.`,
+};
+
+export default (props) => <ArticleLayout meta={meta} {...props} />;
+
+<Image
+  src="/articles/datoBuilder.webp"
+  alt=""
+  width="640"
+  height="420"
+  aria-hidden="true"
+/>
+
+{meta.description}
+
+## Prerequisites
+
+This article assumes that you are comfortable with TypeScript and GraphQL. You need not be an expert, as I will explain things as we go, but
+if you have never worked with one or both of these, I suggest a crash course first.
+
+Regarding TypeScript, the overwhelming majority of the content I have ever created has been in JavaScript rather than TypeScript. I generally prefer to
+keep things as high level and simple as the concept allows for. In this case I am making an exception because I truly believe that it would be perilous to
+scale this example up to an actual production site without TypeScript. It's absolutely achievable, but TypeScript will make working with our eventual components
+that may be receiving any of many types or nested types.
+
+Lastly, the article assumes you have at least played around in the DatoCMS control panel a bit and I won't be going into depth on DatoCMS side details. Their
+documentation is extremely well-written and approachable even to beginners of the platform, so I be linking to the appropriate documentation in cases where it
+helps. This probably won't be the sort of tutorial you just read from top to bottom.
+
+## Introduction
+
+If you are used to the common CMS solutions from past years like WordPress, Concrete5, or any other monolithic solution where your theme, layout, and data
+are all tightly coupled. Headless CMS, as a contrast, are not directly a part of your website codebase or theme. They give you an interface to easily
+model your various types of data such as a blog post, a question and answer pair for a frequently asked questions page, or a list of menu items to render in
+a dynamic navigation. The user can then load whichever data is applicable and produce the desired output on the frontend.
+
+If your data requirements are low, like maybe it's a mostly static company marketing website where just the blog is being pulled from a CMS. In that case,
+the editors can just go in and write or modify blogs and not have to involve development time or resources. But one of the big benefits of a monolithic CMS
+is users who are not developers being able to go in and create custom pages with minimal effort on content-heavy sites.
+
+Don't write off headless CMS solutions just yet, let's explore how we can create a very similar experience and get the best of both worlds!
+
+## DatoCMS at a High Level
+
+This write-up evolved from a system I had to conceptualize for an eCommerce solution that was migrating away from Conrete5 and needed to maintain the above page
+building behavior. So let's start by answering the question -- assuming it wasn't just a client decision I was handed, why DatoCMS? The project actually began
+it's life on Contentful, which is a fantastic content management system, but it and many of its competitors had a serious draw-back in regards to this particular
+use case and that is a finite and relatively low number of model counts. In a system where each component type for a layout / page builder needs to have it's own
+schema and houses a vast variety of data, it makes sense to map each component type to a model type, but this can be extremely limiting.
+
+My company works a lot with headless CMS solutions and I have co-workers that have built similar solutions on both Contentful and Sanity, and it did serve the need.
+However, the system of creating essentially "meta-models" to avoid the hard-cap of unique models resulted in code and an editing experience that could be simpler. So
+history lesson aside, why DatoCMS then?
+
+DatoCMS has a concept of models which are key-value pairs collections of a wide-range of data, and like other competitors in the space has limits to these modules,
+but the magic is in a DatoCMS feature called "Blocks". There is, at least at the time of writing, no limit to the number of blocks even in the free tier which
+removes our largest constraint. The second piece of the magic is a field type called "modular content fields". This field allows you to add a list of these
+blocks to any model record and they are nestable.
+
+Nesting blocks is actually a relatively new feature that was not available for the first version of this system and I am super stoked about how
+much simpler and flexible this makes the solution.
+
+- [DatoCMS Documentation - Content Modeling](https://www.datocms.com/docs/content-modellinga)
+- [DatoCMS Documentation - Blocks](https://www.datocms.com/docs/content-modelling/blocks)
+- [DatoCMS Documentation - Modular Content Fields](https://www.datocms.com/docs/content-modelling/modular-content)
+
+## The Rough Plan
+
+The rough plan at a high level is that we are going to create two different types of blocks in DatoCMS, layout blocks and content blocks. We do not
+currently have a method for actually sorting blocks into different buckets by type, so layout blocks will be prefaced by "Layout" in their name for
+distinction purposes.
+
+We will have a single model used to model the data around a page. That doesn't necessarily have to be your only model, but it will be in the context
+of this article. The approach that I personally used and recommend as well as far as where to draw the line was that for pages that were very complex
+visually or had rich interactivity, I would opt to create those pages like any other NextJS page component. For pages that were less complex visually
+and were primarily content based, I would opt for the page builder.
+
+The page model will not only contain the block data relevant to crafting our page, but will also contain metadata about the page both in the literal sense
+of meta tags like OpenGraph but also in the sense of details like page slug. Former users of WordPress and the Yoast SEO plugin will likely approve of the SEO
+data field in Dato models.
+
+Layout blocks will be the top level element, but instead of thinking of layout in terms of the whole page, think in terms of a slice of a page. Like one area being
+a single column, but the next row of the site being a three column testimonials view with three side by side cards. The page model would contain a list of the
+appropriate layout blocks, while each layout block would contain the applicable content blocks.
+
+Content blocks are the inner element to the layout block. An easy mental model would be to just associate that each content block in the system will map directly
+to a single React component. This mental model has the potential to skew slightly as you scale this into your final use-case. For example, you might have content
+blocks that have "variants" that are so different visually, but consume the same data, that it makes more sense to have them be separate components. But it works
+for now.
+
+## Deciding on Constraints and Limitations
+
+An important step before we dive into beginning to model our pages and layouts is to think about what constraints or limitations you want to put on your layout
+system. We can always strive for more flexibility and better results, but when aiming for 100% of ideas being able to be expressed in the layout builder, you
+reach a point in diminishing returns.
+
+One good example is nesting depth. I haven't encountered a max nestable depth, although I'm sure there is one, but our GraphQL query will also be as nested
+as our data is. I recommend keeping things within one layer of nesting so that each layout block has only one set of sibling content blocks. This is a good trade
+off between implementation complexity and flexibility.
+
+Another thing to consider is how many types of layouts you want to allow. There is a setup overhead involved with this and styling considerations where each
+component can be used within N layout blocks and you have to test and account for each scenario. Another concession I made here to constrain difficulty is to
+make everything a single column layout. The code we will write will just as easily account for other layout variants if you want to add them, but my thought
+process as I reviewed all the Figma designs for pages that would ultimately be layout builder driven, every instance of a multi-column layout could also
+be thought of as a multi-column component since we are building a stacked layout row by row.
+
+In scenarios like this, ambition can be the enemy. In my very first iteration of a proof of concept on this problem, I pulled in my Tech Director for
+a second set of eyes. He looked at it for a few moments and then asked, "Do you realize you implemented headless HTML? The next version was much simpler!
+
+## Step 1: DatoCMS Setup
+
+The first step will be to create our page model described above. The following details the fields and specifications. You can refer to the
+[Content Modeling documentation](https://www.datocms.com/docs/content-modellinga) if necessary, but Dato's UI is so intuitive that you might not even have
+to. If you want, you can use the field set feature to group your fields into logical buckets. This is optional and does not affect the data shape or
+eventual GraphQL query.
+
+| Field   | Type                     | Validations                          | Other                 |
+| ------- | ------------------------ | ------------------------------------ | --------------------- |
+| Name    | Text: Single-line string | Required                             |                       |
+| Slug    | SEO: Slug                | Required, Unique, Match Webpage slug | Reference Field: name |
+| SEO     | SEO: meta tags           | Required(Title, Description)         |                       |
+| Content | Modular Content          | None                                 |                       |
+
+There is a validation option you won't see anywhere else besides the modular content field type that specifies which type of records are
+able to be added to a block. We will dive further into this later, but at a high level, this is how you will control that the page can
+only have layout blocks at the top level and how you can limit what blocks are used within which layouts if you decide to expand out past
+the single one column layout in this article.
+
+## Setup Project Files
+
+For this implementation, I will be using NextJS, but if you want to use a different option like create-react-app or Remix, then that is totally fine.
+The majority of all code will be applicable to any React setup. Just be aware you will need to write your own code to handle routing and move server
+code to the client if your choice does not have an equivalent to `getServerSideProps`.
+
+We will also be using `react-bootstrap` components, so we don't have to worry about getting too involved with making things pretty. I like to think I am
+pretty good at CSS; but I cannot be trusted with a bake sale flier on the design front!
+
+The [final source code](https://github.com/jodylecompte/lesson-datocms-layout-system) on GitHub and future installs in this article will use `pnpm`, but
+stick to your preference. It won't make a difference.
+
+```bash
+# Using your package manager of choice
+$ npx create-next-app@latest --ts
+# or
+$ yarn create next-app --typescript
+# or
+$ pnpm create next-app --ts
+```
+
+Next, we will begin installing our dependencies. A quick note here: typically I would recommend using a package like Apollo for GraphQL queries, but I am
+opting for `graphql-request` instead to align with the DatoCMS documentation on how to generate types that will be mentioned later on. If you feel up to
+using Apollo or another GraphQL request library instead, feel free to substitute your preference in the following code examples.
+
+Dependencies:
+
+```bash
+$ pnpm install --save graphql graphql-request
+```
+
+Dev Dependencies:
+
+```bash
+$ pnpm install --save-dev @graphql-codegen/cli
+@graphql-codegen/typed-document-node @graphql-codegen/typescript
+@graphql-codegen/typescript-operations @graphql-typed-document-node/core
+```
+
+The next step will be to generate our TypeScript types from the DatoCMS GraphQL API. You can find a [full write-up](https://www.datocms.com/blog/how-to-generate-typescript-types-from-graphql)
+of this process on their blog. The only difference between that and what we will be building in the remainder of this article is that I don't like having the
+API details or token stored in a .yml file because ideally we would want to commit that file to version control. But for now, please follow the steps as is and we
+will pick up with making that exact change in the next step.
