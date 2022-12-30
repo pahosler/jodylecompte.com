@@ -1,0 +1,88 @@
+import Image from 'next/image';
+
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+import blankWebPage from './blankWebPage.webp';
+
+export const meta = {
+  author: 'Jody LeCompte',
+  date: '2022-12-30',
+  seoImage: '/articles/htmlProgramming.webp',
+  seoImageWidth: 1280,
+  seoImageHeight: 720,
+  title: 'Is HTML a programming language?',
+  description: `The internet is home to many debates. Does pineapple belong on a pizza? Was the moon landing real or fake? But no debates have 
+  been harder fought than the debate of whether or not HTML is a programming language. Today, we end that debate once and for all. `,
+};
+
+export default (props) => <ArticleLayout meta={meta} {...props} />;
+
+<Image
+  src="/articles/htmlProgramming.webp"
+  alt=""
+  width="640"
+  height="420"
+  aria-hidden="true"
+/>
+
+{meta.description}
+
+## Sorry, You Just Got Click-baited
+
+You may have clicked this article to see if my opinions matched your own, or maybe you wanted to get angry with me and call me a
+gatekeeper. The truth of the matter is, the classification of whether HTML is a programming language or not matters very
+little to me and I won't be making an assertion in favor or against HTML's classification.
+
+But now that you are here, can we talk about the common arguments and how it leads to bad feelings and exclusion?
+
+## The Premise
+
+Of all the arguments in favor of HTML being a programming language, the most common is that if you say HTML is not a programming
+language then you are de-valuing the skills of people who write HTML and making people feel bad by calling them fake programmers and
+that you are decreasing the value of HTML overall.
+
+This is one of those statements that at a high level sounds good. Nobody, well mostly nobody, wants to make beginners feel bad. Or to
+make anyone feel bad about their skills or their abilities. However, it also sets a very dangerous precedent in the form of the idea that
+if "X" is not a programming language, then it is not valuable.
+
+What does this mean for the members of the tech community that very seldom or don't write code at all?
+
+## Technology is More Than Code
+
+I think people get so engrained in their particular niche, like web development, machine learning, or systems programming, that it's
+easy to lose track of how sophisticated of a dependency web modern computer information systems have. Focusing in on the web specifically,
+because that's my particular area of expertise, it takes a significant amount of work from a vast set of disciplines to go from an icon on
+a desktop to a feature-rich web application or website.
+
+If technical writers who prepare documentation were too suddenly disappear off the face of the planet, developer productivity would plummet
+drastically because we'd all be stuck either implementing our own tools from scratch or reading the source code to derive usage patterns.
+
+Even if you classify configuration languages like YAML as programming as well, there are a significant number of network engineers and infrastructure
+specialists that do not write code at all. I used AWS for several years before most of their automation tools were accepted as production grade.
+
+I could make a few more examples, but I fear at this point I may be kicking a dead horse. The underlying point across all examples is the same -- the
+work we do is important whether it happens in a code editor, a platform-as-a-service GUI interface, a content management system, or a board room.
+
+## HTML is Intrinsically Valuable
+
+HTML is the literal foundation of the web. Here is an example of what the web would look like without HTML, only slightly better than what the
+web would look like without electricity.
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+  <Image src={blankWebPage} alt="A browser showing a completely blank page" />
+</div>
+
+Even if you use a framework like React where you are writing in a superset of HTML, or some other compile-to-HTML technology stack, HTML
+is still the 100% necessary platform primitive that gets the entire rodeo started. This is where the value of HTML and the value of people
+who know HTML comes from, not from it's arbitrary classification on a wall of labeled boxes.
+
+## Conclusion
+
+This may seem like a nitpick or being overly pedantic, and in some ways perhaps it is. But I was raised by my mother, an English teacher, to
+believe that words are the most powerful things on the planet. The internet is not typically a place for nuance, and platforms like Twitter
+with extremely restrictive character limits exacerbate this problem.
+
+It's also helpful to remember that there are over 7 billion of us speaking literally thousands of languages. What may be a perfectly clear statement
+between two English speakers may have an unexpected meaning or impact on someone whose native tongue is not English.
+
+It's definitely possible to empower and support people without inadvertently breaking down others.
