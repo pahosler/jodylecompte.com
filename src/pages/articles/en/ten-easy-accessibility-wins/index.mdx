@@ -39,27 +39,26 @@ and it's done. The diversity of people, abilities, disabilities, devices, and as
 learning and improvements that often take time to learn and time to implement.
 
 That said, I am also a firm believer in what I've come to call "accessibility-first" development where simple tweaks to your workflow can make
-things significantly more accessible without using any additional time. I am not advocating for avoiding this reality, hoping to encourage
-people will how easy it can be to get started and make first steps.
+things significantly more accessible without using any additional time. I am not advocating for avoiding this reality, I'm hoping to encourage
+people by showing them how easy it can be to get started with a few first steps.
 
 ## 1. Install Accessibility Testing Tools
 
-While not technically an "easy win", it's an important step one to ensure you not go into battle without your sword or your shield. Accessibility
-testing tools can be extremely helpful in helping you catch overlooked or missed problems as close to them occurring as possible. The longer
-after the fact and the more work that is completed before these sorts of issues get fixed, the more time it will take when the check comes due.
+While not technically an "easy win", it's an important step one to ensure you don't go into battle without your sword or shield. Accessibility
+testing tools are key in helping you catch overlooked or missed problems as close to them occurring as possible. The more work 
+that is completed before these issues get fixed, the longer it will take to implement even basic accessibility.
 
 A few of my favorites:
 
-- [WAVE](https://wave.webaim.org/) - A powerful tool for identifying almost everything if not everything browser developer
-  tools can detect, available free as an extension to all major browsers. I like to run through any touched pages before each merge request to ensure
-  the small and easy details are taken care of first
-- [aXe DevTools](https://www.deque.com/) - A comprehensive suite of tools ranging from feature parity with other free tools in their free tier, but also
+- [WAVE](https://wave.webaim.org/) - A powerful, free browser extension for identifying almost everything, if not more than the built-in browser developer
+  tools can detect. I use wave to run through any touched pages before each merge request to ensure the small and easy details are taken care of first.
+- [aXe DevTools](https://www.deque.com/) - A comprehensive suite of tools ranging in feature parity with other tools in their free tier to 
   tools for continuos integration and deployment pipelines, automated testing, code linting, mobile application accessibility tools, and even live site
   monitoring.
 - [EsLint](https://eslint.org/) - If you are working in JavaScript, you are probably already using ESLint. You can also use custom rule packages
   like [eslint-plugin-jsx-a11y](https://www.npmjs.com/package/eslint-plugin-jsx-a11y) to help keep an eye on issues
-  in real time as you are coding. If you are particularly masochistic like I may be, then you can also configure your setup to fail builds due to
-  accessibility issues. If you are not a React developer, or not working heavily in JavaScript, I'm sure there are similar tools for your stack of
+  in real time as you are coding. If you are particularly masochistic like me, then you can also configure your setup to fail builds due to
+  accessibility issues. If you are not a React developer, or not working heavily using JavaScript, I'm sure there are similar tools for your stack of
   choice.
 
 **Important note:** Automated testing can typically only capture the lowest tier of errors. The tools above are extremely helpful, but should not
@@ -67,19 +66,19 @@ be considered exhaustive. Even after an all clear from the above tools, manual t
 
 ## 2. Alt Tag Your Images and Your Icons
 
-It may be surprising to see something like including alt tags on images in this list or similar lists, but when I am
-doing audits, it is very rare I work on a website that doesn't have a few missing alt tags. If you are conveying important
+It may be surprising to see something like, including alt tags on images in this list or similar lists, but when I am
+doing audits, it is very rare to encounter a website that doesn't have a few missing alt tags. If you are conveying important
 information in the means of an image without an alt tag, then non-visual users are left out.
 
-To the credit of the average programmer, I see this far more often with icons more so than regular images. Depending on your needs,
+To the credit of the average programmer, I see this far more often with icons than regular images. Depending on your needs,
 there are multiple ways you can attack this problem.
 
-Does the image not convey any meaningful information? Just hide it. For example, the images featured at the top of each of my blog posts
-has the exact same text (more or less) as the article headline, so there is no real value to a screen reader reading it to the user twice.
+If an image doesn't convey any meaningful information just hide it. For example, the images featured at the top of each of my blog posts
+have the exact same text (more or less) as the article headline, so there is no real value to a screen reader reading it to the user twice.
 So I give those images an empty alt attribute and use the `aria-hidden` attribute to hide the images from the accessibility API.
 
-In the case of icons, my personal preference is to use a wrapper component that adds `aria-hidden` to the icon and then show a text label
-that is hidden from visual users. The following screen reader ony class is my go-to, written by [Chris Coyier](https://twitter.com/chriscoyier) of
+In the case of icons, my personal preference is to use a wrapper component that adds `aria-hidden` to the icon a text label
+that is hidden from visual users. The following screen reader only class is my go-to, written by [Chris Coyier](https://twitter.com/chriscoyier) of
 [CSS Tricks](https://csstricks.com).
 
 ```css
@@ -94,23 +93,22 @@ that is hidden from visual users. The following screen reader ony class is my go
 }
 ```
 
-Alternatively, you can just add a `title` or `aria-label` to your icon, but the reason I dislike this icon is because some screen readers will still
-announce that an image is there, when the more important information is the behavior. More on this soon in #6 and #9.
+Alternatively, you can just add a `title` or `aria-label` to your icon. I dislike this method because some screen readers will still
+announce that an image is there when communicating information is the more important behavior. More on this soon in [#6](#6-use-anchors-and-buttons-appropriately) and [#9](#9-avoid-color--imagery-as-the-sole-medium-for-information)
 
 ## 3. Responsiveness for Zoom
 
-With the idea of "mobile first" being probably a decade old at this point, I think most developers are definitely considering mobile responsiveness
+With the idea of "mobile first" being a decade old at this point, I think most developers are definitely considering mobile responsiveness
 in their designs, but have you ever tested your site on higher than 100% zoom?
 
 Users that have difficulty reading smaller text size may utilize a magnifying lens style app, they may zoom the entire page in, or may use browser settings
 to increase the base font-size of the entire document. Most people have already adopted using responsive units like rems for font-size, which allows
-all your typography to scale with these changes, but special care can often be needed with media queries.
+all your typography to scale with these changes, but special care is needed with media queries.
 
 A good way to think of this is to imagine the user has the browser full screened and the current viewport width is 1500 pixels; after zooming in to 200%,
-they are now effectively working with 750 pixels and should probably be seeing a mobile or tablet view rather than a significantly and possibly less usable
-desktop view.
+they are now effectively working with 750 pixels. A mobile or tablet view, rahter than a desktop view, may increase usability.
 
-While the solutions to these sorts of problems are easy enough to make this list, it is a surprisingly in-depth topic. For a deeper understanding of
+While there are some simple solutions, it is a surprisingly in-depth topic. For a deeper understanding of
 measurement units in regards to accessibility, I highly recommend
 [The Surprising Truth about Pixels And Accessibility](https://www.joshwcomeau.com/css/surprising-truth-about-pixels-and-accessibility/).
 
@@ -125,28 +123,28 @@ eye-sight in general, low contrast can be very difficult to read. You should str
 
 | Level | Normal Text | Large Text | UI Components |
 | ----- | ----------- | ---------- | ------------- |
-| AA    | 4:5:1       | 3:1        | 3:1           |
+| AA    | 4.5:1       | 3:1        | 3:1           |
 | AAA   | 7:1         | 4.5:1      | Unknown       |
 
 Large text is defined as 14 point (typically 18.66px) and bold or larger, or 18 point (typically 24px) or larger. UI Components refers details such as
 the focus outline state of a form input.
 
 There are multiple ways to discover color contrast issues. All browser developer tools with accessibility tool suites as well as the tools mentioned
-above will detect insufficient contrast. [Fontanello](https://fontanello.app/) is one of my favorite tools for this because I quickly highlight a piece
+above will detect insufficient contrast. [Fontanello](https://fontanello.app/) is one of my favorite tools for this because I can quickly highlight a piece
 of text, right click, and the context menu will have a section that shows me all the data about that piece of typography including its contrast ratio.
 
-The thing that makes this hard is from a design standpoint but also from a client facing standpoint where companies can be very passionate about their
+The thing that makes this hard is from a design standpoint, and also from a client facing standpoint, is companies can be very passionate about their
 brand color choices. Which is why I love this particular [Accessible Color Generator](https://www.learnui.design/tools/accessible-color-generator.html)
 the best because you can input your current background and foreground color and find the closest valid match for your desired WCAG conformance level.
 
 ## 5. Everything Should Be Keyboard Navigable
 
-Keyboard navigation in web user interfaces is a big one, because not only does it allow people who may only use a keyboard and not a mouse for
-any number of reasons, but also power users like the Linux gurus that see reaching for the mouse as a capital offense.
+Keyboard navigation in web user interfaces is a big one. Not only does it allow people who may only use a keyboard, and not a mouse for
+any number of reasons, but also power users that see reaching for the mouse as a capital offense.
 
 ### Use the Platform When You Can
 
-A lot of the time, we get that keyboard navigation for free by making use of the platform. For example, given a regular old datepicker input:
+Most of the time, we get that keyboard navigation for free by making use of the platform. For example, given a regular old datepicker input:
 
 ```html
 <input type="date" />
@@ -154,20 +152,20 @@ A lot of the time, we get that keyboard navigation for free by making use of the
 
 You get a plethora of built-in features:
 
-1. The date can be entered completely as text via keyboard
-2. You can tab between day/month/year in the text input or press space to enter the actual calendar
-3. You can tab between the various actions in the calendar like switching to the year drop down or accessing the month view
-4. The calendar can be closed by the Esc key or space after focusing on the cancel anchor
-5. Navigate between days using the arrow keys
+1. The date can be entered completely as text via keyboard.
+2. You can tab between day/month/year in the text input or press space to enter the actual calendar.
+3. You can tab between the various actions in the calendar like switching to the year drop down or accessing the month view.
+4. The calendar can be closed by the Esc key or space after focusing on the cancel anchor.
+5. Navigate between days using the arrow keys.
 6. Elements all have visible focus state to indicate when focus has been moved by a keyboard.
 
-But if you make the decision for any reason to create your own date picker or to utilize a third party date picker, you need to be aware that behavior
-was thrown away and will have to be re-implemented and steps will potentially be deliberately skipped or un-intentionally missed. This doesn't mean
-never use third-party or always use the platform, development is nuanced. But it is something to be aware of, I dive a bit deeper into this in number 10.
+But if you make the decision for any reason to create your own date picker, or to utilize a third party date picker, you need to be aware that behavior
+was thrown away and will have to be re-implemented, and steps will potentially be deliberately skipped or un-intentionally missed. This doesn't mean
+never use third-party or always use the platform, development is nuanced. But it is something to be aware of, I dive a bit deeper into this in number [10](#10-research-third-party-components).
 
 ### What Does Keyboard Navigation Include?
 
-When unsure of what keyboard behavior may be expected, the ARIA Authoring Practices Guide (APG) often has great documentation to help, for example, the
+When unsure of what keyboard behavior may be expected, the ARIA Authoring Practices Guide (APG) often has great documentation to help. For example, the
 documentation for an [Accordion Example](https://www.w3.org/WAI/ARIA/apg/example-index/accordion/accordion) has the following table:
 
 | Key            | Function                                                                                                                                 |
@@ -181,9 +179,9 @@ for improving work and informing the path of further research.
 
 ### Focus State for Keyboards Only
 
-Briefly mentioned above was the visible focus state for keyboard users, this is a frequently overlooked detail in a lot of user interfaces. There is
-often a disproportionate amount of attention placed on the idea of users that are using a combination of a screen reader **and** using their
-keyboard only, but there are also sighted users that exclusively use a keyboard for preference or any number of potential reasons. They miss out
+Briefly mentioned above was the visible focus state for keyboard users. This is a frequently overlooked detail in a lot of user interfaces. There is
+often a disproportionate amount of attention placed on the idea that users are using a combination of a screen reader **and** using their
+keyboard only, but there are also sighted users who prefer using the keyboard for any number of potential reasons. They miss out
 on the visual indicator of the cursor on the screen indicating which element currently has focus.
 
 Imagine you are looking at a row of 3 buttons and have no feedback to whether or not you are about to click the wrong one, or click one at all for that
@@ -201,7 +199,7 @@ Just keep in mind the contrast ratio considerations above apply to focus states 
 
 ## 6. Use Anchors and Buttons Appropriately
 
-Heavily JavaScript driven front-ends increased the number of mishaps in this regard.
+JavaScript driven front-ends increased the number of mishaps in this regard.
 The ability to attach a click handler to just about anything has led to some less-than-ideal
 solutions. For example, this is a pattern that I see frequently in React:
 
@@ -215,20 +213,20 @@ function DeleteIcon() {
 }
 ```
 
-A screen reader will not be aware of what the image is or that it is click enabled, it will simply read "image". By contrast,
+A screen reader will not be aware of what the image is or that it is click enabled, it will simply read "image". Instead consider,
 
 ```jsx
 function DeleteIcon() {
   return(
     <button onClick={deleteItem}>
       <img src="./delete_icon.svg" alt="Delete Item">
-    </div>;
+    </button>;
   );
 }
 ```
 
 This will properly be identified as a button so that the user not only realizes there is a button with behavior behind a click, but they can also
-infer what action will be produced. To re-iterate on some earlier ideas, this is a good example of my claim "accessible-first development" because
+infer what action will be produced. To re-iterate on some earlier, this is a good example of my "accessible-first development" idea, because
 option 2 does not take any more time than option 1, but is significantly more accessible. You also get the keyboard behavior, again for free, by using
 a platform primitive.
 
@@ -239,15 +237,15 @@ using those.
 
 ## 7. Build Forms for All Users
 
-Someone may want to debate me on this, but I think that forms may possibly be the second most important thing on the internet after content.
+Opinions may vary, but I believe that forms may be the second most important thing on the internet after content.
 Without the ability to capture user input in a form, the overwhelming majority of applications would not be possible. But as critical as their
 importance is, they are often done in a way that could be improved.
 
 ### Labeling
 
-A good chunk of the issues I observe with forms come down to form inputs just not being correctly labeled. Whether this be because the inputs
-have an icon like a telephone next to them, are labeled by the placeholder, or there is a visual label that is just not programmatically associated
-with it's respective input. There is a lot of flexibility here, and I've never noticed a difference in interpretation by assistive technology, so
+Incorrect form lables are responsible for the majority of form input issues I encounter. Common form input lable issues are, having a telephone or 
+similar icon next to them, placeholder labels, or a visual label that is not programmatically associated
+with it's respective input. There is a lot of flexibility here, and I've never noticed a difference in interpretation by assistive technology, 
 any of these would be valid:
 
 ```html
@@ -274,35 +272,35 @@ any of these would be valid:
 />
 ```
 
-I'm partial to option 2 personally, but there are benefits to other approaches like using `aria-labeledby` to combine multiple labels together into
+I'm partial to option 2, however there are benefits to other approaches. For example, using `aria-labeledby` to combine multiple labels together into
 a singular accessible label.
 
 ### Keyboard Control
 
-Re-visiting #5, the form should be able to be navigated backwards and forwards with
-a keyboard, input, and submitted via a keyboard. The platform, unless we deviate,
+Re-visiting [#5](#5), the form should be able to be navigated backwards, forwards, and submitted with
+a keyboard. The platform, unless we deviate,
 will typically address this for us. The biggest thing to watch out for that I see
-broken most frequently, especially on JavaScript driven forms is ensuring that the
-submit button can be triggered both directly or via enter while focused on a form
-element. Naturally, pressing enter prematurely may require error handling.
+broken most often, especially on JavaScript driven forms, is ensuring that the
+submit button can be triggered via enter while focused on a form
+element. Pressing enter prematurely may require error handling.
 
 ### Error Handling
 
 Even if you plan to use your own custom validation or validation rolled into a form library for your stack of choice. You should still use
-HTML5 validation properties when it makes sense. For example, if your input actually has the required property, then a screen reader will actually
+HTML5 validation properties when it makes sense. For example, if your input has the required property, then a screen reader will 
 announce that it is a required input when it reads its label.
 
-HTML5 validation by default will also announce to the user that the validation has failed letting them know what went wrong. This is a surprisingly
-deep topic of potential options, but an easy first step is ensure the area where your error is rendered has the ARIA role of "alert" so assistive
+HTML5 validation by default will also announce to the user that the validation has failed, letting them know what went wrong. This is a 
+deep topic, but an easy first step is ensure the area where your error is rendered has the ARIA role of "alert" so assistive
 technology will inform the user.
 
-Errors should always be clear to their nature, text simply being red or a form being outlined is not sufficient by its self. More on that soon.
+Errors should always be clear in their nature. Text simply being highlighted red or outlining a form field is not sufficient by its self. More on that soon.
 
 ## 8. Test with an Actual Screen Reader
 
-This one is actually short and sweet. As mentioned earlier, automated testing tools like WAVE or aXe can only catch certain classes errors. To ensure
-the best experience possible for your screen reader users, you need to actually test your site with a screen reader. The litmus test I usually ask of
-people is to pull up their website or latest project, turn on their screen reader, and close their eyes. Then attempt to locate and submit the contact
+This one is short and sweet. As mentioned earlier, automated testing tools like WAVE or aXe can only catch certain classes errors. To ensure
+the best experience possible for screen reader users, you need to test your site with a screen reader. The litmus test I ask of
+people is to pull up their website or latest project, turn on their screen reader, close their eyes, and attempt to locate and submit the contact form.
 form (or an equivalent action) by audio cues only.
 
 A few popular options:
@@ -317,27 +315,27 @@ Just keep in mind that screen readers are similar to browsers in that they don't
 
 ## 9. Avoid Color & Imagery as the Sole Medium for Information
 
-Using color or images as the sole mechanism by which information is conveyed to the user has some assumptions that are not necessarily
+Using color or images as the sole mechanism by which information is conveyed to the user has some assumptions that are not 
 always true. The user may not be using your website visually at all, or they may be using the site visually but may not see the color
 the same way you do.
 
 There's nothing wrong with using color and images to create a compelling or functional design, but always strive to have the information
-available outside of those. Like in the case of form errors, you can show your text in red or orange, and changing the outline color of the
-input is fine; but there should also be a clear and concise text indication of what the error is as well.
+available outside of those. In the case of form errors, you can show your text in red or orange, or change the outline color of the
+input field, but there should also be a clear and concise text indication of what the error is as well.
 
-Just be mindful of the point of diminishing or ill returns, for example, if you give an image an alt tag with **too much** information then it
+Just be mindful of the point of diminishing returns. For example, if you give an image an alt tag with **too much** information then it
 becomes your sighted users that are missing out on potentially important context or information.
 
 <a id="test" />
 ## 10. Research Third Party Components
 
-Some components are notoriously hard to get right from an accessibility standpoint. There are some components, like a date picker, that I don't even feel
+Some components are harder to get right from an accessibility standpoint. There are some components, like a date picker, that I don't even feel
 comfortable tackling, despite having a decent amount of experience in web development and accessibility. One easy way to improve accessibility
-in a profound way very quickly is to stand on the shoulder of giants.
+in a profound way is to stand on the shoulder of giants.
 
-There are frameworks like [React UI](https://reach.tech/) and [Shoelace](https://shoelace.style/) where considerable amounts of thought, energy, and probably
-a fair amount of sweat and tears went into making components that are accessible as possible. If you are unsure about a particular framework
-or unsure how to best audit the accessibility of UI kit before committing, feel free to ask the community. A lot of us spend a considerable amount
+There are frameworks like [React UI](https://reach.tech/) and [Shoelace](https://shoelace.style/) where considerable amounts of thought, energy, and 
+a fair amount of sweat and tears went into making components that are as accessible as possible. If you are unsure about a particular framework
+or unsure how to best audit the accessibility of a UI kit before committing, feel free to ask the community. A lot of us spend a considerable amount
 of energy trying to advocate and educate on accessibility and we are overjoyed when someone shows an interest in improving their trade and are happy
 to help.
 
@@ -347,12 +345,13 @@ tab to the menu when it was off-screen and inert, opening and closing state was 
 documentation, the more I dreaded needing to rebuild my sidebar.
 
 A co-worker advised me to give Chakra UI's sidebar a test drive, and low and behold, it checked every checkbox I was able to come across and only took
-an hour and some change to transition over and retire my old menu.
+a hour to transition over and retire my old menu.
 
 ## Conclusion
 
 As I mentioned earlier, accessibility is a vast topic that a person could specialize exclusively in. So don't feel discouraged or intimidated
 by the amount of knowledge out there. Start with items 1 through 10 above, and once you are feeling confident in your new approach and your
-understandings of the whens and whys, peel back the next layer of the onion to level up your skill and make your work even more accessible.
+understanding of the whens and whys, peel back the next layer of the onion to level up your skill and make your work even more accessible.
 
 For some further reading, the [Dig-In resources page](https://a11y.coffee/dig-in/) over at a11y.coffee is a great collection of information.
+
