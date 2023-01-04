@@ -1,45 +1,44 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 
-import { ArticleLayout } from '@/components/ArticleLayout';
-import { DSAPreface } from '@/components/articles/DSAPreface';
+// import { ArticleLayout } from '@/components/ArticleLayout';
+// import { DSAPreface } from '@/components/articles/DSAPreface';
 
-export const meta = {
-  author: 'Jody LeCompte',
-  date: '2022-12-26',
-  title: 'Demystifying Sorting Algorithms: Bubble Sort',
-  seoImage: '/articles/dsaBubbleSort.webp',
-  description: `In part one of Demystifying Sorting Algorithms`,
-};
+// export const meta = {
+//   author: 'Jody LeCompte',
+//   date: '2022-12-26',
+//   title: 'Demystifying Sorting Algorithms: Bubble Sort',
+//   seoImage: '/articles/dsaBubbleSort.webp',
+//   description: `In part one of Demystifying Sorting Algorithms`,
+// };
 
-export default (props) => <ArticleLayout meta={meta} {...props} />;
+// export default (props) => <ArticleLayout meta={meta} {...props} />;
 
-<Image
-  src="/articles/dsaBubbleSort.webp"
-  alt=""
-  width="640"
-  height="420"
-  aria-hidden="true"
-/>
+// <Image
+//   src="/articles/dsaBubbleSort.webp"
+//   alt=""
+//   width="640"
+//   height="420"
+//   aria-hidden="true"
+// />
 
-{meta.description}
+// {meta.description}
 
-<DSAPreface />
 
 ## Introduction to the Bubble Sort
 
 Bubble sort in most cases might be the least performant bubble sort, so it is not one that you will
 find in many code-bases. However, it is still a good starting point in this series to get our feet wet
-because the implementation is extremely trivial to implement.
+because the implementation is trivial to implement.
 
 Bubble sort is a swap based algorithm. It steps through the array using a nested loop and compares each
 item to the adjacent items in pairs. If it encounters an instance where the second element in each pair,
 or the number to the right, is smaller than the first on the left, those two elements are swapped.
 
 The first implementation we will look at has a time complexity of O(N^2). What does that mean? It means
-that the time it takes to sort will grow exponentially to `N` where `N`` is the size of the list.
+that the time it takes to sort will grow exponentially to `N` where `N` is the size of the list.
 If we attempt to sort a list with 5 numbers, it will take 15 iterations. From there a collection size of 6
 numbers would iterate 20 times, and 27 iterations for 7 numbers. This scaling is what makes sorting algorithms
-like bubble suit unsuitable for large datasets.
+like bubble sort unsuitable for large datasets.
 
 ## Stepping through
 
@@ -103,7 +102,7 @@ function bubbleSort(collection) {
 ```
 
 The outer loop is really only used to calculate the offset and facilitate the number of iterations necessary
-to fully sort, is isn't used for actual index lookups in the input. But take note of the inner loop. The terminating
+to fully sort, it isn't used for actual index lookups in the input. But take note of the inner loop. The terminating
 condition gets one item shorter each time the outer loop runs to reflect the fact that the last `i + 1` items
 in the list are known to be sorted already.
 
@@ -127,8 +126,8 @@ function bubbleSort(collection) {
 
 ## A Light Seasoning of Optimization
 
-As mentioned previously, the above implementation will always be the worst case of O(N^2), because there is no safe-guard
-against unnecessary iteration. For example, the first sample was pretty mixed up, but what if our array was mostly already
+The above implementation will always be the worst case of O(N^2), because there is no safe-guard
+against unnecessary iterations. For example, the first sample was pretty mixed up, but what if our array was mostly already
 sorted.
 
 ```javascript
@@ -141,7 +140,7 @@ until `i` in our outer loop matches the length of the array.
 
 We can solve this by adding a simple swap indicator, a boolean value that will start as false and be changed to true
 if we swap at any point in the inner loop. Then before the outer loop concludes and restarts, we can make the assertion
-that if no swaps happened in the last inner loop iterations, then we can return as the list as sorted.
+that if no swaps happened in the last inner loop we can return the list as sorted.
 
 ```javascript
 function bubbleSortOptimized(collection) {
@@ -164,7 +163,7 @@ function bubbleSortOptimized(collection) {
 
 It's not an enormous savings, but this does bring down the example collection from 14 iterations to 9 iterations,
 contrasted against only decreasing from 14 to 12 for the original data set. The take-away here is that algorithms
-don't always have a consistent runtime complexity. With this optimization. With this optimization, we can now achieve
+don't always have a consistent runtime complexity. With this optimization, we can now achieve
 a rare, but much better runtime for nearly-sorted list, but the average list will still be (N^2) like the un-optimized
 example.
 
